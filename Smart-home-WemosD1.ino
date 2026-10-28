@@ -6,7 +6,7 @@
 ESP8266WiFiMulti wifiMulti;
 
 // ข้อมูล Server บน Render
-const char* ws_host  = "smart-office-esp32.onrender.com";
+const char* ws_host  = "smart-home-wemosd1.onrender.com";
 const int   ws_port  = 443;
 const char* ws_path  = "/esp";
 
