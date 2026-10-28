@@ -1,343 +1,111 @@
 <!DOCTYPE html>
 <html lang="th">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Smart Energy Exercise Bike Dashboard</title>
-  
-  <!-- Google Fonts & FontAwesome Icons -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
-  <style>
-    :root {
-      --bg-color: #0b0f19;
-      --card-bg: rgba(21, 30, 48, 0.65);
-      --card-border: rgba(255, 255, 255, 0.08);
-      --text-main: #f8fafc;
-      --text-muted: #94a3b8;
-      
-      /* Neon Accent Colors */
-      --color-voltage: #38bdf8;
-      --color-current: #818cf8;
-      --color-power: #f59e0b;
-      --color-energy: #10b981;
-    }
-
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
-
-    body {
-      font-family: 'Kanit', sans-serif;
-      background: var(--bg-color);
-      background-image: 
-        radial-gradient(at 10% 15%, rgba(56, 189, 248, 0.12) 0px, transparent 40%),
-        radial-gradient(at 90% 85%, rgba(16, 185, 129, 0.1) 0px, transparent 40%);
-      min-height: 100vh;
-      color: var(--text-main);
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      padding: 30px 16px;
-    }
-
-    .container {
-      width: 100%;
-      max-width: 920px;
-    }
-
-    /* Header Section */
-    .header {
-      text-align: center;
-      margin-bottom: 36px;
-    }
-
-    .badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      padding: 6px 16px;
-      border-radius: 20px;
-      background: rgba(255, 255, 255, 0.05);
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      font-size: 13px;
-      color: #00f2fe;
-      letter-spacing: 0.5px;
-      margin-bottom: 12px;
-    }
-
-    h1 {
-      font-size: 2.2rem;
-      font-weight: 700;
-      background: linear-gradient(135deg, #ffffff 0%, #cbd5e1 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      margin-bottom: 10px;
-    }
-
-    .status-box {
-      display: inline-flex;
-      align-items: center;
-      gap: 10px;
-      font-size: 14px;
-      color: var(--text-muted);
-      background: rgba(15, 23, 42, 0.8);
-      padding: 6px 18px;
-      border-radius: 30px;
-      border: 1px solid rgba(255, 255, 255, 0.08);
-    }
-
-    .status-dot {
-      width: 10px;
-      height: 10px;
-      border-radius: 50%;
-      background-color: #ef4444;
-      box-shadow: 0 0 10px #ef4444;
-      transition: all 0.3s ease;
-    }
-
-    .status-dot.connected {
-      background-color: #10b981;
-      box-shadow: 0 0 12px #10b981;
-    }
-
-    /* Cards Grid */
-    .grid {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 18px;
-      margin-bottom: 36px;
-    }
-
-    @media (max-width: 860px) {
-      .grid {
-        grid-template-columns: repeat(2, 1fr);
-      }
-    }
-
-    @media (max-width: 480px) {
-      .grid {
-        grid-template-columns: 1fr;
-      }
-    }
-
-    .card {
-      background: var(--card-bg);
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
-      border: 1px solid var(--card-border);
-      border-radius: 20px;
-      padding: 22px 20px;
-      position: relative;
-      transition: all 0.3s ease;
-      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
-    }
-
-    .card:hover {
-      transform: translateY(-4px);
-      border-color: rgba(255, 255, 255, 0.2);
-      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
-    }
-
-    .card-top {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-bottom: 20px;
-    }
-
-    .card-title {
-      font-size: 12px;
-      font-weight: 600;
-      color: var(--text-muted);
-      text-transform: uppercase;
-      letter-spacing: 1px;
-    }
-
-    .icon-box {
-      width: 42px;
-      height: 42px;
-      border-radius: 12px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 18px;
-    }
-
-    /* Color Variants */
-    .card-v .icon-box { background: rgba(56, 189, 248, 0.12); color: var(--color-voltage); }
-    .card-i .icon-box { background: rgba(129, 140, 248, 0.12); color: var(--color-current); }
-    .card-p .icon-box { background: rgba(245, 158, 11, 0.12); color: var(--color-power); }
-    .card-e .icon-box { background: rgba(16, 185, 129, 0.12); color: var(--color-energy); }
-
-    .value-group {
-      display: flex;
-      align-items: baseline;
-      gap: 6px;
-    }
-
-    .value {
-      font-family: 'Space Grotesk', sans-serif;
-      font-size: 32px;
-      font-weight: 700;
-      color: var(--text-main);
-    }
-
-    .unit {
-      font-size: 15px;
-      font-weight: 600;
-      color: var(--text-muted);
-    }
-
-    /* Actions */
-    .actions {
-      text-align: center;
-    }
-
-    .btn-reset {
-      font-family: 'Kanit', sans-serif;
-      background: linear-gradient(135deg, #ef4444 0%, #b91c1c 100%);
-      color: white;
-      border: none;
-      padding: 12px 28px;
-      font-size: 15px;
-      font-weight: 500;
-      border-radius: 12px;
-      cursor: pointer;
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      box-shadow: 0 4px 20px rgba(239, 68, 68, 0.35);
-      transition: all 0.2s ease;
-    }
-
-    .btn-reset:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 6px 24px rgba(239, 68, 68, 0.5);
-      background: linear-gradient(135deg, #f87171 0%, #dc2626 100%);
-    }
-
-    .btn-reset:active {
-      transform: translateY(0);
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Office - 8 Channels</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f0f2f5; margin: 0; padding: 20px; }
+        h2 { text-align: center; color: #333; margin-bottom: 20px; }
+        .grid-container { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px; max-width: 800px; margin: 0 auto; }
+        .card { background: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); text-align: center; }
+        .card h3 { margin: 0 0 15px 0; font-size: 18px; color: #555; }
+        
+        /* สไตล์ปุ่ม Switch */
+        .switch { position: relative; display: inline-block; width: 60px; height: 34px; }
+        .switch input { opacity: 0; width: 0; height: 0; }
+        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #ccc; transition: .4s; border-radius: 34px; }
+        .slider:before { position: absolute; content: ""; height: 26px; width: 26px; left: 4px; bottom: 4px; background-color: white; transition: .4s; border-radius: 50%; }
+        input:checked + .slider { background-color: #2196F3; }
+        input:checked + .slider:before { transform: translateX(26px); }
+        
+        .controls { text-align: center; margin-top: 30px; }
+        .btn { padding: 10px 20px; font-size: 16px; margin: 5px; cursor: pointer; border: none; border-radius: 8px; color: white; transition: 0.3s;}
+        .btn-on { background-color: #4CAF50; }
+        .btn-off { background-color: #f44336; }
+        .btn:hover { opacity: 0.8; }
+        #status { text-align: center; margin-top: 10px; font-weight: bold; color: orange; }
+    </style>
 </head>
 <body>
 
-  <div class="container">
-    <div class="header">
-      <div class="badge"><i class="fa-solid fa-bolt"></i> SMART ENERGY SYSTEM</div>
-      <h1>Smart Power Monitoring</h1>
-      <div class="status-box">
-        <span id="status-dot" class="status-dot"></span>
-        <span id="status-text">กำลังเชื่อมต่อระบบ...</span>
-      </div>
+    <h2>⚡ Smart Office Control (8 ช่อง)</h2>
+    <div id="status">กำลังเชื่อมต่อเซิร์ฟเวอร์...</div>
+
+    <div class="grid-container" id="relay-container">
+        <!-- สร้างการ์ดปุ่มกด 8 ช่องด้วย JavaScript -->
     </div>
 
-    <div class="grid">
-      <!-- Voltage Card -->
-      <div class="card card-v">
-        <div class="card-top">
-          <span class="card-title">Voltage</span>
-          <div class="icon-box"><i class="fa-solid fa-car-battery"></i></div>
-        </div>
-        <div class="value-group">
-          <span class="value" id="v">0.0</span>
-          <span class="unit">V</span>
-        </div>
-      </div>
-
-      <!-- Current Card -->
-      <div class="card card-i">
-        <div class="card-top">
-          <span class="card-title">Current</span>
-          <div class="icon-box"><i class="fa-solid fa-plug"></i></div>
-        </div>
-        <div class="value-group">
-          <span class="value" id="i">0.00</span>
-          <span class="unit">A</span>
-        </div>
-      </div>
-
-      <!-- Power Card -->
-      <div class="card card-p">
-        <div class="card-top">
-          <span class="card-title">Power</span>
-          <div class="icon-box"><i class="fa-solid fa-lightbulb"></i></div>
-        </div>
-        <div class="value-group">
-          <span class="value" id="p">0.0</span>
-          <span class="unit">W</span>
-        </div>
-      </div>
-
-      <!-- Energy Card -->
-      <div class="card card-e">
-        <div class="card-top">
-          <span class="card-title">Energy</span>
-          <div class="icon-box"><i class="fa-solid fa-charging-station"></i></div>
-        </div>
-        <div class="value-group">
-          <span class="value" id="e">0.00</span>
-          <span class="unit">Wh</span>
-        </div>
-      </div>
+    <div class="controls">
+        <button class="btn btn-on" onclick="controlAll(true)">เปิดทั้งหมด</button>
+        <button class="btn btn-off" onclick="controlAll(false)">ปิดทั้งหมด</button>
     </div>
 
-    <div class="actions">
-      <button class="btn-reset" onclick="resetEnergy()">
-        <i class="fa-solid fa-rotate-right"></i> ล้างค่าพลังงาน (Reset Energy)
-      </button>
-    </div>
-  </div>
-
-  <script>
-    const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
-    const wsUrl = `${protocol}//${window.location.host}/esp`;
-    const ws = new WebSocket(wsUrl);
-
-    const statusText = document.getElementById('status-text');
-    const statusDot = document.getElementById('status-dot');
-
-    ws.onopen = () => {
-      statusText.textContent = 'เชื่อมต่อระบบเรียบร้อย';
-      statusText.style.color = '#34d399';
-      statusDot.classList.add('connected');
-    };
-
-    ws.onclose = () => {
-      statusText.textContent = 'ขาดการเชื่อมต่อจาก Server';
-      statusText.style.color = '#f87171';
-      statusDot.classList.remove('connected');
-    };
-
-    ws.onmessage = (event) => {
-      try {
-        const data = JSON.parse(event.data);
-        if (data.type === 'ENERGY_DATA') {
-          if (data.voltage !== undefined) document.getElementById('v').textContent = data.voltage;
-          if (data.current !== undefined) document.getElementById('i').textContent = data.current;
-          if (data.power !== undefined) document.getElementById('p').textContent = data.power;
-          if (data.energy !== undefined) document.getElementById('e').textContent = data.energy;
+    <script>
+        const NUM_RELAYS = 8;
+        const container = document.getElementById('relay-container');
+        const statusText = document.getElementById('status');
+        
+        // สร้างหน้าตาปุ่มกด 8 ช่อง
+        for (let i = 0; i < NUM_RELAYS; i++) {
+            const label = i < 3 ? `แอร์ ${i+1}` : (i === 3 ? "ปั๊มน้ำ" : `อุปกรณ์ ${i+1}`);
+            container.innerHTML += `
+                <div class="card">
+                    <h3>${label} (Ch ${i})</h3>
+                    <label class="switch">
+                        <input type="checkbox" id="relay-${i}" onchange="toggleRelay(${i}, this.checked)">
+                        <span class="slider"></span>
+                    </label>
+                </div>
+            `;
         }
-      } catch (err) {
-        console.error('Error parsing JSON:', err);
-      }
-    };
 
-    function resetEnergy() {
-      if (ws.readyState === WebSocket.OPEN) {
-        ws.send(JSON.stringify({ type: 'RESET_ENERGY' }));
-        alert('ส่งคำสั่ง Reset Energy ไปยัง ESP32 เรียบร้อยแล้ว');
-      } else {
-        alert('ไม่สามารถส่งคำสั่งได้ เนื่องจากไม่ได้เชื่อมต่อกับ Server');
-      }
-    }
-  </script>
+        // เชื่อมต่อ WebSocket 
+        // เปลี่ยนโปรโตคอลให้ตรงกับ Host ปัจจุบัน (ws:// หรือ wss://)
+        const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+        const wsUrl = `${protocol}//${window.location.host}/esp`; // หรือใช้ URL ของ Render ตามจริง
+        let ws;
+
+        function connectWebSocket() {
+            ws = new WebSocket(wsUrl);
+
+            ws.onopen = () => {
+                statusText.innerText = "🟢 เชื่อมต่อเซิร์ฟเวอร์สำเร็จ";
+                statusText.style.color = "green";
+                ws.send(JSON.stringify({ type: 'GET_STATE' }));
+            };
+
+            ws.onmessage = (event) => {
+                const data = JSON.parse(event.data);
+                if (data.relays && Array.isArray(data.relays)) {
+                    for (let i = 0; i < NUM_RELAYS; i++) {
+                        const checkbox = document.getElementById(`relay-${i}`);
+                        if (checkbox) checkbox.checked = data.relays[i];
+                    }
+                }
+            };
+
+            ws.onclose = () => {
+                statusText.innerText = "🔴 ขาดการเชื่อมต่อ กำลังเชื่อมต่อใหม่...";
+                statusText.style.color = "red";
+                setTimeout(connectWebSocket, 3000); // พยายามเชื่อมต่อใหม่ทุก 3 วินาที
+            };
+        }
+
+        function toggleRelay(ch, state) {
+            if (ws && ws.readyState === WebSocket.OPEN) {
+                ws.send(JSON.stringify({ type: 'CONTROL', ch: ch, state: state }));
+            }
+        }
+
+        function controlAll(state) {
+            if (ws && ws.readyState === WebSocket.OPEN) {
+                ws.send(JSON.stringify({ type: 'CONTROL_ALL', state: state }));
+            }
+        }
+
+        // เริ่มต้นการเชื่อมต่อ
+        connectWebSocket();
+    </script>
 </body>
 </html>
